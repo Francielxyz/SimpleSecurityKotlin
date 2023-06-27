@@ -4,58 +4,49 @@ import jakarta.persistence.*
 import lombok.Builder
 import lombok.Data
 import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
-import simple.security.kotlin.model.enums.Role
+import java.util.*
 
 @Data
 @Builder
 @Entity
 @Table(name = "user")
 class UserModel(
-        @Id
-        @GeneratedValue(strategy = GenerationType.IDENTITY)
-        @Column(name = "id", nullable = false)
-        var id: Long? = null,
 
-        @Column(name = "name")
-        var name: String? = null,
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "user_id")
+    private var userId: UUID,
 
-        @Column(name = "email", unique = true)
-        var email: String? = null,
+    @Column(name = "user_name", nullable = false)
+    var userName: String,
 
-        @Column(name = "user_password")
-        var userPassword: String? = null,
+    @Column(name = "user_password", nullable = false)
+    var userPassword: String,
 
-        @Column(name = "role")
-        @Enumerated(EnumType.STRING)
-        var role: Role? = null,
-) : UserDetails {
-    override fun getAuthorities(): MutableCollection<out GrantedAuthority> {
-        return mutableListOf(SimpleGrantedAuthority(role!!.name))
-    }
+    @Column(name = "email", unique = true, nullable = false)
+    var email: String,
 
-    override fun getUsername(): String {
-        return email!!
-    }
+    @ManyToMany
+    @JoinTable(
+        name = "user_role",
+        joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "role_id", referencedColumnName = "role_id")]
+    )
+    var roles: List<RoleModel> = mutableListOf(),
 
-    override fun getPassword(): String {
-        return userPassword!!
-    }
+    ) : UserDetails {
+    override fun getAuthorities(): Collection<GrantedAuthority?> = roles
 
-    override fun isAccountNonExpired(): Boolean {
-        return true
-    }
+    override fun getUsername(): String = email
 
-    override fun isAccountNonLocked(): Boolean {
-        return true
-    }
+    override fun getPassword(): String = userPassword
 
-    override fun isCredentialsNonExpired(): Boolean {
-        return true
-    }
+    override fun isAccountNonExpired(): Boolean = true
 
-    override fun isEnabled(): Boolean {
-        return true
-    }
+    override fun isAccountNonLocked(): Boolean = true
+
+    override fun isCredentialsNonExpired(): Boolean = true
+
+    override fun isEnabled(): Boolean = true
 }
