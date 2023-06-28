@@ -20,12 +20,10 @@ class AuthenticationController {
     private lateinit var authenticationService: AuthenticationService
 
     @PostMapping("/register")
-    fun register(@RequestBody userDTO: UserDTO): ResponseEntity<TokenDTO?>? {
-        return ResponseEntity.ok(authenticationService.register(userDTO))
-    }
+    fun register(@RequestBody userDTO: UserDTO): ResponseEntity<TokenDTO?>? =
+        ResponseEntity.ok(authenticationService.register(userDTO))
 
     @PostMapping("/authenticate")
-    fun authenticate(@RequestBody userDTO: UserDTO): ResponseEntity<TokenDTO?>? {
-        return ResponseEntity.ok(authenticationService.authenticate(userDTO))
-    }
+    fun authenticate(@RequestBody userDTO: UserDTO): ResponseEntity<TokenDTO?>? =
+        ResponseEntity.ok(authenticationService.authenticate(userDTO))
 }

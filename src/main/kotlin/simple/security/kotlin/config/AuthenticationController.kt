@@ -23,12 +23,12 @@ class ApplicationConfig {
     private lateinit var userRepository: UserRepository
 
     @Bean
-    fun userDetailsService(): UserDetailsService {
-        return UserDetailsService { username: String ->
-            userRepository.findByEmail(username)
-                    .orElseThrow { UsernameNotFoundException("User not found") }
+    fun userDetailsService(): UserDetailsService =
+        UserDetailsService { username: String ->
+            userRepository.findByEmail(username).orElseThrow {
+                UsernameNotFoundException("User not found")
+            }
         }
-    }
 
     @Bean
     fun authenticationProvider(): AuthenticationProvider {
@@ -40,12 +40,11 @@ class ApplicationConfig {
 
     @Bean
     @Throws(Exception::class)
-    fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager {
-        return config.authenticationManager
-    }
+    fun authenticationManager(config: AuthenticationConfiguration): AuthenticationManager =
+        config.authenticationManager
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder {
-        return BCryptPasswordEncoder()
-    }
+    fun passwordEncoder(): PasswordEncoder =
+        BCryptPasswordEncoder()
+
 }

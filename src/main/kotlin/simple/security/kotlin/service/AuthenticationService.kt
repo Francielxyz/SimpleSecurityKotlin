@@ -6,6 +6,7 @@ import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import simple.security.kotlin.converter.Converter
 import simple.security.kotlin.dto.TokenDTO
 import simple.security.kotlin.dto.UserDTO
 import simple.security.kotlin.model.TokenModel
@@ -35,12 +36,11 @@ class AuthenticationService {
     private lateinit var authenticationManager: AuthenticationManager
 
     fun register(userDTO: UserDTO): TokenDTO {
-        val userEntity = userDTO.toEntity(
-                passwordEncoder.encode(userDTO.password),
-                Role.USER
-        )
+        userDTO.password =  passwordEncoder.encode(userDTO.password)
 
-        val tokenDTO = TokenDTO(token = jwtService.generateToken(userEntity))
+        val userEntity = Converter.toModel(userDTO, UserModel::class.java)
+
+        val tokenDTO = TokenDTO(jwtService.generateToken(userEntity))
 
         saveUserToken(userRepository.save(userEntity), tokenDTO.token!!)
 
@@ -49,10 +49,10 @@ class AuthenticationService {
 
     fun authenticate(userDTO: UserDTO): TokenDTO {
         authenticationManager.authenticate(
-                UsernamePasswordAuthenticationToken(
-                        userDTO.email,
-                        userDTO.password
-                )
+            UsernamePasswordAuthenticationToken(
+                userDTO.email,
+                userDTO.password
+            )
         )
 
         userRepository.findByEmail(userDTO.email).also {
@@ -67,13 +67,13 @@ class AuthenticationService {
 
     private fun saveUserToken(userModel: UserModel, jwtToken: String) {
         tokenRepository.save(
-                TokenModel(
-                        token = jwtToken,
-                        tokenType = Token.BEARER,
-                        expired = false,
-                        revoked = false,
-                        userModel = userModel
-                )
+            TokenModel(
+                token = jwtToken,
+                tokenType = Token.BEARER,
+                expired = false,
+                revoked = false,
+                userModel = userModel
+            )
         )
     }
 

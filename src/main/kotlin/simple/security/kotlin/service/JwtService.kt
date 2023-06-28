@@ -15,54 +15,43 @@ class JwtService {
 
     private val SECRET_KEY = "404E635266556A586E3272357538782F413F4428472B4B6250645367566B5970"
 
-    fun extractUsername(token: String): String {
-        return extractClaim(token, Claims::getSubject)
-    }
+    fun extractUsername(token: String): String =
+        extractClaim(token, Claims::getSubject)
 
-    fun <T> extractClaim(token: String, claimsResolver: (Claims) -> T): T {
-        val claims: Claims = extractAllClaims(token)
-        return claimsResolver(claims)
-    }
+    fun <T> extractClaim(token: String, claimsResolver: (Claims) -> T): T =
+        claimsResolver(extractAllClaims(token))
 
-    fun generateToken(userDetails: UserDetails): String {
-        return generateToken(HashMap(), userDetails)
-    }
+    fun generateToken(userDetails: UserDetails): String =
+        generateToken(HashMap(), userDetails)
 
-    fun generateToken(extraClaims: Map<String, Any?>?, userDetails: UserDetails): String {
-        return Jwts
-                .builder()
-                .setClaims(extraClaims)
-                .setSubject(userDetails.username)
-                .setIssuedAt(Date(System.currentTimeMillis()))
-                .setExpiration(Date(System.currentTimeMillis() + 1000 * 60 * 24))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
-                .compact()
-    }
+    fun generateToken(extraClaims: Map<String, Any?>?, userDetails: UserDetails): String =
+        Jwts
+            .builder()
+            .setClaims(extraClaims)
+            .setSubject(userDetails.username)
+            .setIssuedAt(Date(System.currentTimeMillis()))
+            .setExpiration(Date(System.currentTimeMillis() + 1000 * 60 * 24))
+            .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+            .compact()
 
-    fun isTokenValid(token: String, userDetails: UserDetails): Boolean {
-        val username = extractUsername(token)
-        return username == userDetails.username && !isTokenExpired(token)
-    }
+    fun isTokenValid(token: String, userDetails: UserDetails): Boolean =
+        extractUsername(token) == userDetails.username && !isTokenExpired(token)
 
     private fun isTokenExpired(token: String): Boolean {
         return extractExpiration(token).before(Date())
     }
 
-    private fun extractExpiration(token: String): Date {
-        return extractClaim(token, Claims::getExpiration)
-    }
+    private fun extractExpiration(token: String): Date =
+        extractClaim(token, Claims::getExpiration)
 
-    private fun extractAllClaims(token: String): Claims {
-        return Jwts
-                .parserBuilder()
-                .setSigningKey(getSignInKey())
-                .build()
-                .parseClaimsJws(token)
-                .body
-    }
+    private fun extractAllClaims(token: String): Claims =
+        Jwts
+            .parserBuilder()
+            .setSigningKey(getSignInKey())
+            .build()
+            .parseClaimsJws(token)
+            .body
 
-    private fun getSignInKey(): Key? {
-        val keyBytes: ByteArray = Decoders.BASE64.decode(SECRET_KEY)
-        return Keys.hmacShaKeyFor(keyBytes)
-    }
+    private fun getSignInKey(): Key? =
+        Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY))
 }
