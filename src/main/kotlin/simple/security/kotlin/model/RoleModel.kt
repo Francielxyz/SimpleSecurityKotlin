@@ -15,9 +15,9 @@ import java.util.UUID
 class RoleModel(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "role_id")
-    var roleId: UUID,
+    var roleId: Long,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "role", nullable = false, unique = true)

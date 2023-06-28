@@ -2,7 +2,9 @@ package simple.security.kotlin.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import simple.security.kotlin.converter.Converter
 import simple.security.kotlin.dto.ClassroomDTO
+import simple.security.kotlin.model.ClassroomModel
 import simple.security.kotlin.ports.ClassroomServicePort
 import simple.security.kotlin.repository.ClassroomRepository
 
@@ -16,9 +18,14 @@ class ClassroomService : ClassroomServicePort {
         TODO("Not yet implemented")
     }
 
-    override fun save(classroomDTO: ClassroomDTO): ClassroomDTO {
-        TODO("Not yet implemented")
-    }
+    override fun save(classroomDTO: ClassroomDTO): ClassroomDTO =
+        Converter.toModel(
+            classroomRepository.saveAndFlush(
+                Converter.toModel(classroomDTO, ClassroomModel::class.java)
+            ),
+            ClassroomDTO::class.java
+        )
+
 
     override fun getAll(): List<ClassroomDTO?> {
         TODO("Not yet implemented")

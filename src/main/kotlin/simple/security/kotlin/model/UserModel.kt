@@ -14,9 +14,9 @@ import java.util.*
 class UserModel(
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private var userId: UUID,
+    private var id: Long,
 
     @Column(name = "user_name", nullable = false)
     var userName: String,
@@ -30,8 +30,8 @@ class UserModel(
     @ManyToMany
     @JoinTable(
         name = "user_role",
-        joinColumns = [JoinColumn(name = "user_id", referencedColumnName = "user_id")],
-        inverseJoinColumns = [JoinColumn(name = "role_id", referencedColumnName = "role_id")]
+        joinColumns = [JoinColumn(name = "user_id")],
+        inverseJoinColumns = [JoinColumn(name = "role_id")]
     )
     var roles: List<RoleModel> = mutableListOf(),
 

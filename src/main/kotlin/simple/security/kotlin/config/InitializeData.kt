@@ -15,12 +15,11 @@ class InitializeData {
     private lateinit var dataSource: DataSource
 
     @EventListener(ApplicationReadyEvent::class)
-    fun loadData() {
+    fun loadData() =
         ResourceDatabasePopulator(
             true,
             false,
             "UTF-8",
             ClassPathResource("/db/insert_classrrom.sql")
         ).execute(dataSource)
-    }
 }

@@ -21,7 +21,9 @@ class ClassroomController {
 
     @PostMapping("/save")
     fun register(@RequestBody classroomDTO: ClassroomDTO): ResponseEntity<ClassroomDTO> =
-        ResponseEntity.status(HttpStatus.CREATED).body(classroomDTO)
+        ResponseEntity.status(HttpStatus.CREATED).body(
+            classroomService.save(classroomDTO)
+        )
 
 
     // TODO - Fazer retorna um page
