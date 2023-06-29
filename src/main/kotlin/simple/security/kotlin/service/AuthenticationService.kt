@@ -11,7 +11,6 @@ import simple.security.kotlin.dto.TokenDTO
 import simple.security.kotlin.dto.UserDTO
 import simple.security.kotlin.model.TokenModel
 import simple.security.kotlin.model.UserModel
-import simple.security.kotlin.model.enums.Role
 import simple.security.kotlin.model.enums.Token
 import simple.security.kotlin.repository.TokenRepository
 import simple.security.kotlin.repository.UserRepository
@@ -36,7 +35,7 @@ class AuthenticationService {
     private lateinit var authenticationManager: AuthenticationManager
 
     fun register(userDTO: UserDTO): TokenDTO {
-        userDTO.password =  passwordEncoder.encode(userDTO.password)
+        userDTO.password = passwordEncoder.encode(userDTO.password)
 
         val userEntity = Converter.toModel(userDTO, UserModel::class.java)
 
