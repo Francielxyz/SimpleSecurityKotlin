@@ -4,7 +4,9 @@ import jakarta.persistence.*
 import lombok.Builder
 import lombok.Data
 import org.springframework.security.core.GrantedAuthority
+import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import simple.security.kotlin.model.abstract.AuditoriaModel
 import simple.security.kotlin.model.enums.Role
 import java.util.*
 
@@ -16,7 +18,7 @@ class UserModel(
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
+    @Column(name = "id")
     private var id: Long,
 
     @Column(name = "user_name", nullable = false)
@@ -31,10 +33,9 @@ class UserModel(
     @Enumerated(EnumType.STRING)
     private var role: Role? = null
 
-    ) : UserDetails {
-    override fun getAuthorities(): Collection<GrantedAuthority?>? {
-        return role?.getAuthorities()
-    }
+) : UserDetails, AuditoriaModel() {
+    override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
+        mutableListOf(SimpleGrantedAuthority(role?.name))
 
     override fun getUsername(): String = email
 

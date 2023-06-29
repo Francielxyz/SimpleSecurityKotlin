@@ -1,5 +1,5 @@
 package simple.security.kotlin.model.enums
 
-enum class Token {
+enum class TokenType {
     BEARER
 }
