@@ -5,6 +5,7 @@ import lombok.Builder
 import lombok.Data
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
+import simple.security.kotlin.model.enums.Role
 import java.util.*
 
 @Data
@@ -27,16 +28,13 @@ class UserModel(
     @Column(name = "email", unique = true, nullable = false)
     var email: String,
 
-    @ManyToMany
-    @JoinTable(
-        name = "user_role",
-        joinColumns = [JoinColumn(name = "user_id")],
-        inverseJoinColumns = [JoinColumn(name = "role_id")]
-    )
-    var roles: List<RoleModel> = mutableListOf(),
+    @Enumerated(EnumType.STRING)
+    private var role: Role? = null
 
     ) : UserDetails {
-    override fun getAuthorities(): Collection<GrantedAuthority?> = roles
+    override fun getAuthorities(): Collection<GrantedAuthority?>? {
+        return role?.getAuthorities()
+    }
 
     override fun getUsername(): String = email
 
