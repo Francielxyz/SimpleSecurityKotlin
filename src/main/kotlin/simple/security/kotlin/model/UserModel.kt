@@ -19,27 +19,27 @@ class UserModel(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private var id: Long,
+    var id: Long? = null,
 
     @Column(name = "user_name", nullable = false)
-    var userName: String,
+    var userName: String? = null,
 
     @Column(name = "user_password", nullable = false)
-    var userPassword: String,
+    var userPassword: String? = null,
 
     @Column(name = "email", unique = true, nullable = false)
-    var email: String,
+    var email: String? = null,
 
     @Enumerated(EnumType.STRING)
-    private var role: Role? = null
+    var role: Role? = null
 
 ) : UserDetails, AuditoriaModel() {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
         mutableListOf(SimpleGrantedAuthority(role?.name))
 
-    override fun getUsername(): String = email
+    override fun getUsername(): String? = email
 
-    override fun getPassword(): String = userPassword
+    override fun getPassword(): String? = userPassword
 
     override fun isAccountNonExpired(): Boolean = true
 

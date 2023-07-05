@@ -24,10 +24,10 @@ class TokenModel(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private var id: Long,
+    private var id: Long? = null,
 
     @Column(name = "token", nullable = false)
-    var token: String,
+    var token: String? = null,
 
     @Enumerated(EnumType.STRING)
     @Column(name = "token_type")
