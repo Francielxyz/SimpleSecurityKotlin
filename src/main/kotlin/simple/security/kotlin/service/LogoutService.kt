@@ -30,7 +30,7 @@ class LogoutService : LogoutHandler {
 
         val jwt = authHeader.substring(7)
 
-        tokenRepository.findByToken(jwt)?.also {
+        tokenRepository.findByToken(jwt).map {
             it.expired = true
             it.revoked = true
             tokenRepository.save(it)

@@ -33,11 +33,11 @@ class AuthenticationService {
     private lateinit var tokenRepository: TokenRepository
 
     @Autowired
-    private lateinit var jwtService: JwtService
+    private lateinit var jwtService: JwtService // TODO - CRIAR INTERFACE
+
+    private lateinit var authenticationManager: AuthenticationManager // TODO - CRIAR INTERFACE
 
     private lateinit var passwordEncoder: PasswordEncoder
-
-    private lateinit var authenticationManager: AuthenticationManager
 
     fun register(userDTO: UserDTO): TokenDTO {
         userDTO.password = passwordEncoder.encode(userDTO.password)
@@ -64,18 +64,20 @@ class AuthenticationService {
             )
         )
 
-        userRepository.findByEmail(userDTO?.email).also {
+        val tokenDTO = TokenDTO()
+
+        userRepository.findByEmail(userDTO?.email).map {
             val jwtToken = jwtService.generateToken(it)
             val refreshToken = jwtService.generateRefreshToken(it)
 
             revokeAllUserTokens(it)
             saveUserToken(it, jwtToken)
 
-            return TokenDTO(
-                token = jwtToken,
-                refreshToken = refreshToken
-            )
+            tokenDTO.token = jwtToken
+            tokenDTO.refreshToken = refreshToken
         }
+
+        return tokenDTO
     }
 
     private fun saveUserToken(userModel: UserModel?, jwtToken: String?) {
@@ -113,7 +115,7 @@ class AuthenticationService {
         val userEmail = jwtService.extractUsername(refreshToken)
 
         if (userEmail != null) {
-            val user = userRepository.findByEmail(userEmail)
+            val user = userRepository.findByEmail(userEmail).orElseThrow()
 
             if (jwtService.isTokenValid(refreshToken, user)) {
                 val accessToken = jwtService.generateToken(user)

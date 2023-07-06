@@ -3,6 +3,7 @@ package simple.security.kotlin.repository
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import simple.security.kotlin.model.TokenModel
+import java.util.Optional
 
 interface TokenRepository : JpaRepository<TokenModel, Long> {
 
@@ -14,7 +15,7 @@ interface TokenRepository : JpaRepository<TokenModel, Long> {
                 AND (t.expired = FALSE OR t.revoked = FALSE)
         """
     )
-    fun findAllValidTokenByUser(id: Long?): List<TokenModel?>
+    fun findAllValidTokenByUser(id: Long?): List<TokenModel>
 
-    fun findByToken(token: String?): TokenModel?
+    fun findByToken(token: String?): Optional<TokenModel>
 }
