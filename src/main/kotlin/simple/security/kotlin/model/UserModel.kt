@@ -24,7 +24,7 @@ class UserModel(
     @Column(name = "user_name", nullable = false)
     var userName: String? = null,
 
-    @Column(name = "user_password", nullable = false)
+    @Column(name = "password", nullable = false)
     var userPassword: String? = null,
 
     @Column(name = "email", unique = true, nullable = false)
@@ -37,9 +37,10 @@ class UserModel(
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
         mutableListOf(SimpleGrantedAuthority(role?.name))
 
+    override fun getPassword(): String? = userPassword
+
     override fun getUsername(): String? = email
 
-    override fun getPassword(): String? = userPassword
 
     override fun isAccountNonExpired(): Boolean = true
 

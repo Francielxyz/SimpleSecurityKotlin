@@ -12,7 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import simple.security.kotlin.converter.Converter
 import simple.security.kotlin.dto.AuthenticationDTO
-import simple.security.kotlin.dto.TokenDTO
 import simple.security.kotlin.dto.UserDTO
 import simple.security.kotlin.model.TokenModel
 import simple.security.kotlin.model.UserModel
@@ -39,7 +38,7 @@ class AuthenticationService {
 
     private lateinit var passwordEncoder: PasswordEncoder
 
-    fun register(userDTO: UserDTO): TokenDTO {
+    fun register(userDTO: UserDTO): AuthenticationDTO {
         userDTO.password = passwordEncoder.encode(userDTO.password)
         userDTO.role = Role.USER
 
@@ -50,30 +49,30 @@ class AuthenticationService {
 
         saveUserToken(userRepository.save(userModel), jwtToken)
 
-        return TokenDTO(
-            token = jwtToken,
+        return AuthenticationDTO(
+            accessToken = jwtToken,
             refreshToken = refreshToken
         )
     }
 
-    fun authenticate(userDTO: UserDTO?): TokenDTO {
+    fun authenticate(email: String?, password: String?): AuthenticationDTO {
         authenticationManager.authenticate(
             UsernamePasswordAuthenticationToken(
-                userDTO?.email,
-                userDTO?.password
+                email,
+                password
             )
         )
 
-        val tokenDTO = TokenDTO()
+        val tokenDTO = AuthenticationDTO()
 
-        userRepository.findByEmail(userDTO?.email).map {
+        userRepository.findByEmail(email).map {
             val jwtToken = jwtService.generateToken(it)
             val refreshToken = jwtService.generateRefreshToken(it)
 
             revokeAllUserTokens(it)
             saveUserToken(it, jwtToken)
 
-            tokenDTO.token = jwtToken
+            tokenDTO.accessToken = jwtToken
             tokenDTO.refreshToken = refreshToken
         }
 
@@ -95,8 +94,8 @@ class AuthenticationService {
     private fun revokeAllUserTokens(userModel: UserModel?) {
         tokenRepository.findAllValidTokenByUser(userModel?.id).also {
             it.forEach { token ->
-                token?.expired = true
-                token?.revoked = true
+                token.expired = true
+                token.revoked = true
             }
 
             tokenRepository.saveAll(it)
