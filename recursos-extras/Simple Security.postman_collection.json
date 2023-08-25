@@ -7,44 +7,13 @@
 	},
 	"item": [
 		{
-			"name": "Demo controller",
-			"request": {
-				"auth": {
-					"type": "bearer",
-					"bearer": [
-						{
-							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJmcmFuY2llbEBnbWFpbC5jb20iLCJpYXQiOjE2ODA2NTk5MDUsImV4cCI6MTY4MDY2MTM0NX0.pNP6_ld3Tdg58erkTdgPPALe-vVfg8DsV_U9GiVVSpw",
-							"type": "string"
-						}
-					]
-				},
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "http://localhost:8080/api/v1/demo-controller",
-					"protocol": "http",
-					"host": [
-						"localhost"
-					],
-					"port": "8080",
-					"path": [
-						"api",
-						"v1",
-						"demo-controller"
-					]
-				}
-			},
-			"response": []
-		},
-		{
 			"name": "Register",
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"name\": \"Teste\",\r\n    \"email\": \"teste@gmail.com\",\r\n    \"password\": \"1234\"\r\n}",
+					"raw": "{\r\n    \"userName\": \"Teste\",\r\n    \"password\": \"1234\",\r\n    \"email\": \"teste@gmail.com\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -75,7 +44,7 @@
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"email\": \"teste@gmail.com\",\r\n    \"password\": \"1234\"\r\n}",
+					"raw": "",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -83,7 +52,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1/auth/authenticate",
+					"raw": "http://localhost:8080/api/v1/auth/authenticate?email=teste@gmail.com&password=1234",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -94,6 +63,52 @@
 						"v1",
 						"auth",
 						"authenticate"
+					],
+					"query": [
+						{
+							"key": "email",
+							"value": "teste@gmail.com"
+						},
+						{
+							"key": "password",
+							"value": "1234"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Refresh Token",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0ZUBnbWFpbC5jb20iLCJpYXQiOjE2OTI5MjQ2MjAsImV4cCI6MTY5MzUyOTQyMH0.jsP2DXyXiSLvYDFbe534YXWvv2oZavcfOwWuOUH3KhY",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/auth/refresh-token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"refresh-token"
 					]
 				}
 			},
