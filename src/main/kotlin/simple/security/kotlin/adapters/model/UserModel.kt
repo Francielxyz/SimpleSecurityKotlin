@@ -1,16 +1,19 @@
 package simple.security.kotlin.adapters.model
 
-import jakarta.persistence.*
-import lombok.Builder
-import lombok.Data
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import simple.security.kotlin.adapters.enums.Role
 import simple.security.kotlin.adapters.model.abstract.AuditoriaModel
 
-@Data
-@Builder
 @Entity
 @Table(name = "user")
 class UserModel(
