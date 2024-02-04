@@ -33,11 +33,11 @@ class UserModel(
     var email: String? = null,
 
     @Enumerated(EnumType.STRING)
-    var role: Role? = null
+    var role: Role = Role.USER
 
 ) : UserDetails, AuditoriaModel() {
     override fun getAuthorities(): MutableCollection<out GrantedAuthority> =
-        mutableListOf(SimpleGrantedAuthority(role?.name))
+        mutableListOf(SimpleGrantedAuthority(role.name))
 
     override fun getPassword(): String? = userPassword
 

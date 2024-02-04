@@ -27,7 +27,8 @@ class JwtAuthenticationFilter : OncePerRequestFilter() {
     override fun doFilterInternal(
         @NonNull request: HttpServletRequest,
         @NonNull response: HttpServletResponse,
-        @NonNull filterChain: FilterChain) {
+        @NonNull filterChain: FilterChain
+    ) {
         if (request.servletPath?.contains("/api/v1/auth") == true) {
             filterChain.doFilter(request, response)
             return
@@ -46,11 +47,7 @@ class JwtAuthenticationFilter : OncePerRequestFilter() {
         if (userEmail != null && SecurityContextHolder.getContext().authentication == null) {
             val userDetails = userDetailsService.loadUserByUsername(userEmail)
 
-            val isTokenValid = jwtService.findByToken(jwt).let { tokenModel ->
-                tokenModel?.expired == true && tokenModel.revoked == true
-            }
-
-            if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid) {
+            if (jwtService.isTokenValid(userDetails, jwt)) {
                 val authToken = UsernamePasswordAuthenticationToken(
                     userDetails,
                     null,
@@ -61,36 +58,4 @@ class JwtAuthenticationFilter : OncePerRequestFilter() {
             }
         }
     }
-//
-//    val authHeader = request.getHeader("Authorization").also {
-//        if (it == null || !it.startsWith("Bearer ")) {
-//            filterChain.doFilter(request, response)
-//            return
-//        }
-//    }
-//
-//    val jwt = authHeader.substring(7)
-//
-//    jwtService.extractUsername(jwt)?.let {
-//        if (it.isNotBlank() && SecurityContextHolder.getContext().authentication == null) {
-//
-//            val isTokenValid: Boolean? = tokenRepository.findByToken(jwt).map { tokenModel ->
-//                tokenModel?.expired == true && tokenModel.revoked == true
-//            }?.orElse(false)
-//
-//            userDetailsService.loadUserByUsername(it).let { userDetails ->
-//                if (jwtService.isTokenValid(jwt, userDetails) && isTokenValid == true) {
-//                    val authToken = UsernamePasswordAuthenticationToken(
-//                        userDetails,
-//                        null,
-//                        userDetails.authorities
-//                    )
-//
-//                    authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-//
-//                    SecurityContextHolder.getContext().authentication = authToken
-//                }
-//            }
-//        }
-//    }
 }

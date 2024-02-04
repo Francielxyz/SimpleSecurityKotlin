@@ -10,7 +10,7 @@
 //
 //@Component
 //class InitializeData {
-//
+// TODO - Exemplo rodar um serviço para adiconar registro no banco de dados caso não exista nada
 //    @Autowired
 //    private lateinit var dataSource: DataSource
 //

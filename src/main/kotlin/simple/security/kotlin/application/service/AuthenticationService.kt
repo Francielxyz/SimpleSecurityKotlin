@@ -52,13 +52,13 @@ class AuthenticationService : AuthenticationServicePort {
 
     @Transactional(rollbackFor = [Throwable::class])
     override fun authenticate(email: String?, password: String?): AuthenticationMapper {
-        val userModel = findByEmail(email)
+        val user = findByEmail(email)
 
         authenticationManager.authenticate(UsernamePasswordAuthenticationToken(email, password))
 
         return AuthenticationMapper().also {
-            it.accessToken = jwtService.generateToken(userModel)
-            it.refreshToken = jwtService.generateRefreshToken(userModel)
+            it.accessToken = jwtService.generateToken(user, createExtraClaims(user.role))
+            it.refreshToken = jwtService.generateRefreshToken(user)
         }
     }
 
@@ -73,8 +73,8 @@ class AuthenticationService : AuthenticationServicePort {
         val refreshToken = authHeader.substring(7)
         val user = findByEmail(jwtService.extractUsername(refreshToken))
 
-        if (jwtService.isTokenValid(refreshToken, user)) {
-            authenticationMapper.accessToken = jwtService.generateToken(user)
+        if (jwtService.isTokenValid(user, refreshToken)) {
+            authenticationMapper.accessToken = jwtService.generateToken(user, createExtraClaims(user.role))
             authenticationMapper.refreshToken = refreshToken
         }
 
@@ -84,4 +84,8 @@ class AuthenticationService : AuthenticationServicePort {
     private fun findByEmail(userEmail: String?) = authenticationIntegration.findByEmail(userEmail)?.let {
         Converter.toModel(it, UserModel::class.java)
     } ?: throw PersonalizedException(HttpStatus.UNAUTHORIZED, messageSource.getMessage("erro.usuario.invalido"))
+
+    private fun createExtraClaims(role: Role): Map<String, Any> = mapOf(
+        "role" to role.opcao,
+    )
 }

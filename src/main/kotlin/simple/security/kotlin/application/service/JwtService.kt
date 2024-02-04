@@ -19,10 +19,10 @@ class JwtService : JwtServicePort {
     private val secretKey: String? = null
 
     @Value("\${application.security.jwt.expiration}")
-    private val jwtExpiration: Long = 0
+    private val jwtExpiration30Minutes: Long = 0
 
     @Value("\${application.security.jwt.refresh-token.expiration}")
-    private val refreshExpiration: Long = 0
+    private val refreshExpiration24Hours: Long = 0
 
     override fun extractUsername(token: String?): String? =
         extractClaim(token, Function { obj: Claims? -> obj?.subject })
@@ -32,21 +32,18 @@ class JwtService : JwtServicePort {
         return claimsResolver.apply(claims)
     }
 
-    override fun generateToken(userDetails: UserDetails?): String? =
-        generateToken(HashMap<String, Any>(), userDetails)
-
-    override fun generateToken(extraClaims: Map<String, Any>?, userDetails: UserDetails?): String? =
-        buildToken(extraClaims, userDetails, jwtExpiration)
+    override fun generateToken(userDetails: UserDetails?, extraClaims: Map<String, Any>?): String? =
+        buildToken(userDetails, extraClaims, jwtExpiration30Minutes)
 
     override fun generateRefreshToken(userDetails: UserDetails?): String? =
-        buildToken(HashMap(), userDetails, refreshExpiration)
+        buildToken(userDetails, HashMap(), refreshExpiration24Hours)
 
-    override fun isTokenValid(token: String?, userDetails: UserDetails?): Boolean {
+    override fun isTokenValid(userDetails: UserDetails?, token: String?): Boolean {
         val username = extractUsername(token)
         return username == userDetails?.username && !isTokenExpired(token)
     }
 
-    private fun buildToken(extraClaims: Map<String, Any>?, userDetails: UserDetails?, expiration: Long): String? =
+    private fun buildToken(userDetails: UserDetails?, extraClaims: Map<String, Any>?, expiration: Long): String? =
         Jwts
             .builder()
             .setClaims(extraClaims)
