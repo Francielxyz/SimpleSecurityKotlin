@@ -10,5 +10,5 @@ interface AuthenticationServicePort {
 
     fun authenticate(email: String?, password: String?): AuthenticationMapper
 
-    fun refreshToken(request: HttpServletRequest, response: HttpServletResponse)
+    fun refreshToken(request: HttpServletRequest, response: HttpServletResponse): AuthenticationMapper
 }

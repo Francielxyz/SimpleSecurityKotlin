@@ -42,9 +42,11 @@ class AuthenticationController {
 
     @PostMapping("/refresh-token")
     @Throws(IOException::class)
-    fun refreshToken(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<Any> =
+    fun refreshToken(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<AuthenticationDTO> =
         ResponseEntity.status(HttpStatus.OK).body(
-            service.refreshToken(request, response)
+            service.refreshToken(request, response).let {
+                Converter.toModel(it, AuthenticationDTO::class.java)
+            }
         )
 
 }

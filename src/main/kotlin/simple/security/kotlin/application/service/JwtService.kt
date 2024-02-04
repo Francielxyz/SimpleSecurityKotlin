@@ -5,29 +5,16 @@ import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.SignatureAlgorithm
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
-import simple.security.kotlin.adapters.converter.Converter
-import simple.security.kotlin.adapters.enums.TokenType
-import simple.security.kotlin.adapters.model.TokenModel
-import simple.security.kotlin.adapters.model.UserModel
-import simple.security.kotlin.application.mapper.TokenMapper
 import simple.security.kotlin.ports.input.JwtServicePort
-import simple.security.kotlin.ports.output.TokenIntegrationPort
 import java.security.Key
-import java.util.Date
+import java.util.*
 import java.util.function.Function
-import kotlin.collections.HashMap
 
 @Service
 class JwtService : JwtServicePort {
-
-    @Autowired
-    private lateinit var tokenIntegrationPort: TokenIntegrationPort
-
     @Value("\${application.security.jwt.secret-key}")
     private val secretKey: String? = null
 
@@ -36,44 +23,6 @@ class JwtService : JwtServicePort {
 
     @Value("\${application.security.jwt.refresh-token.expiration}")
     private val refreshExpiration: Long = 0
-
-    @Transactional(rollbackFor = [Throwable::class])
-    override fun save(tokenMapper: TokenMapper): TokenMapper? =
-        tokenIntegrationPort.save(Converter.toModel(tokenMapper, TokenModel::class.java))
-
-    override fun saveTokenUserModel(idUser: Long?, jwtToken: String?): TokenMapper? {
-        val tokenMapper = TokenMapper(
-            token = jwtToken,
-            tokenType = TokenType.BEARER,
-            revoked = false,
-            expired = false,
-            user = UserModel(id = idUser)
-        )
-
-        return save(tokenMapper)
-    }
-
-
-    @Transactional(rollbackFor = [Throwable::class])
-    override fun revokeAllUserTokens(idUser: Long?) {
-        tokenIntegrationPort.findAllValidTokenByUser(idUser)?.also { token ->
-            token.forEach {
-                it.expired = true
-                it.revoked = true
-            }
-
-            tokenIntegrationPort.saveAll(token.map {
-                Converter.toModel(it, TokenModel::class.java)
-            })
-        }
-    }
-
-
-    override fun findAllValidTokenByUser(id: Long?): List<TokenMapper>? =
-        tokenIntegrationPort.findAllValidTokenByUser(id)
-
-    override fun findByToken(token: String?): TokenMapper? =
-        tokenIntegrationPort.findByToken(token)
 
     override fun extractUsername(token: String?): String? =
         extractClaim(token, Function { obj: Claims? -> obj?.subject })
