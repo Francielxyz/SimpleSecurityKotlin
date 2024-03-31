@@ -29,7 +29,7 @@ class JwtAuthenticationFilter : OncePerRequestFilter() {
         @NonNull response: HttpServletResponse,
         @NonNull filterChain: FilterChain
     ) {
-        if (request.servletPath?.contains("/api/v1/auth") == true) {
+        if (request.servletPath?.contains("/authentication") == true) {
             filterChain.doFilter(request, response)
             return
         }
@@ -41,21 +41,23 @@ class JwtAuthenticationFilter : OncePerRequestFilter() {
             return
         }
 
-        val jwt = authHeader.substring(7)
-        val userEmail = jwtService.extractUsername(jwt)
+        val jwtToken = authHeader.replace("Bearer ", "")
+        val userEmail = jwtService.extractUsername(jwtToken)
 
         if (userEmail != null && SecurityContextHolder.getContext().authentication == null) {
             val userDetails = userDetailsService.loadUserByUsername(userEmail)
 
-            if (jwtService.isTokenValid(userDetails, jwt)) {
-                val authToken = UsernamePasswordAuthenticationToken(
+            if (jwtService.isTokenValid(userDetails, jwtToken)) {
+                val authentication = UsernamePasswordAuthenticationToken(
                     userDetails,
                     null,
                     userDetails!!.authorities
                 )
-                authToken.details = WebAuthenticationDetailsSource().buildDetails(request)
-                SecurityContextHolder.getContext().authentication = authToken
+                authentication.details = WebAuthenticationDetailsSource().buildDetails(request)
+                SecurityContextHolder.getContext().authentication = authentication
             }
         }
+
+        filterChain.doFilter(request, response)
     }
 }
