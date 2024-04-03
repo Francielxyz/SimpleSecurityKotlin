@@ -19,14 +19,14 @@ import simple.security.kotlin.application.extensions.getMessage
 import simple.security.kotlin.application.mapper.AuthenticationMapper
 import simple.security.kotlin.ports.input.AuthenticationServicePort
 import simple.security.kotlin.ports.input.JwtServicePort
-import simple.security.kotlin.ports.output.UserIntegrationPort
+import simple.security.kotlin.ports.output.UserPersistencePort
 
 @Service
 @RequiredArgsConstructor
 class AuthenticationService : AuthenticationServicePort {
 
     @Autowired
-    private lateinit var userIntegrationPort: UserIntegrationPort
+    private lateinit var userIntegrationPort: UserPersistencePort
 
     @Autowired
     private lateinit var jwtService: JwtServicePort
@@ -73,6 +73,6 @@ class AuthenticationService : AuthenticationServicePort {
     } ?: throw PersonalizedException(HttpStatus.UNAUTHORIZED, messageSource.getMessage("erro.usuario.invalido"))
 
     private fun createExtraClaims(role: Role): Map<String, Any> = mapOf(
-        "role" to role.opcao,
+        "role" to role.option,
     )
 }

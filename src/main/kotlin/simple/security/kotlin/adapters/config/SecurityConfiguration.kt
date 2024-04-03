@@ -36,6 +36,14 @@ class SecurityConfiguration {
                 it.requestMatchers(HttpMethod.POST, "/user/v1/register").permitAll()
                 it.requestMatchers(HttpMethod.PUT, "/user/v1/update").authenticated()
             }
+            .authorizeHttpRequests {
+                it.requestMatchers(HttpMethod.GET, "/movie/v1").hasAnyAuthority("ADMIN", "USER")
+                it.requestMatchers(HttpMethod.GET, "/movie/v1/movies").hasAnyAuthority("ADMIN", "USER")
+                it.requestMatchers(HttpMethod.POST, "/movie/v1/save").hasAnyAuthority("ADMIN")
+                it.requestMatchers(HttpMethod.PUT, "/movie/v1/update").hasAnyAuthority("ADMIN")
+                it.requestMatchers(HttpMethod.DELETE, "/movie/v1/delete").hasAnyAuthority("ADMIN")
+                    .anyRequest().authenticated()
+            }
             .authenticationProvider(authenticationProvider)
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
             .sessionManagement()

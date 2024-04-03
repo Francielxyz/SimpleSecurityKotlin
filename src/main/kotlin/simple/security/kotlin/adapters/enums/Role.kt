@@ -1,7 +1,7 @@
 package simple.security.kotlin.adapters.enums
 
 enum class Role(
-    val opcao: String
+    val option: String
 ) {
     USER("USER") {
         override fun opcaoApi() = "USER"

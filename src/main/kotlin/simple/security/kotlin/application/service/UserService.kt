@@ -6,7 +6,6 @@ import org.springframework.context.MessageSource
 import org.springframework.http.HttpStatus
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
-import org.springframework.transaction.annotation.Transactional
 import simple.security.kotlin.adapters.converter.Converter
 import simple.security.kotlin.adapters.enums.Role
 import simple.security.kotlin.adapters.model.UserModel
@@ -14,14 +13,14 @@ import simple.security.kotlin.application.exception.PersonalizedException
 import simple.security.kotlin.application.extensions.getMessage
 import simple.security.kotlin.application.mapper.UserMapper
 import simple.security.kotlin.ports.input.UserServicePort
-import simple.security.kotlin.ports.output.UserIntegrationPort
+import simple.security.kotlin.ports.output.UserPersistencePort
 
 @Service
 @RequiredArgsConstructor
 class UserService : UserServicePort {
 
     @Autowired
-    private lateinit var userIntegrationPort: UserIntegrationPort
+    private lateinit var userIntegrationPort: UserPersistencePort
 
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
@@ -29,7 +28,6 @@ class UserService : UserServicePort {
     @Autowired
     private lateinit var messageSource: MessageSource
 
-    @Transactional(rollbackFor = [Throwable::class])
     override fun register(userMapper: UserMapper) {
         userIntegrationPort.findByEmail(userMapper.email)?.let {
             throw PersonalizedException(HttpStatus.BAD_REQUEST, messageSource.getMessage("erro.email.cadastrado"))
@@ -40,7 +38,6 @@ class UserService : UserServicePort {
         userIntegrationPort.save(Converter.toModel(userMapper, UserModel::class.java))
     }
 
-    @Transactional(rollbackFor = [Throwable::class])
     override fun update(userMapper: UserMapper) {
         val userMapperUpdate = userIntegrationPort.findById(userMapper.id!!)?.also {
             it.userName = userMapper.userName
