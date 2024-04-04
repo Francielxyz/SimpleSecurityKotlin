@@ -12,11 +12,11 @@ import java.time.LocalDateTime
 @EntityListeners(AuditingEntityListener::class)
 open class AuditoriaModel(
 
-    @Column(name = "data_hora_criacao", updatable = false)
+    @Column(name = "date_time_creation", updatable = false)
     @CreatedDate
-    open var dataHoraCriacao: LocalDateTime? = null,
+    open var dateTimeCreation: LocalDateTime? = null,
 
-    @Column(name = "data_hora_ultima_atualizacao")
+    @Column(name = "date_time_last_update")
     @LastModifiedDate
-    open var dataHoraUltimaAtualizacao: LocalDateTime? = null
+    open var dateTimeLastUpdate: LocalDateTime? = null
 )

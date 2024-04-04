@@ -9,6 +9,6 @@ data class UserDTO(
     var password: String? = null,
     var email: String? = null,
     var role: Role? = null,
-    var dataHoraCriacao: LocalDateTime? = null,
-    var dataHoraUltimaAtualizacao: LocalDateTime? = null,
+    var dateTimeCreation: LocalDateTime? = null,
+    var dateTimeLastUpdate: LocalDateTime? = null,
 )
