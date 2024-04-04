@@ -1,5 +1,6 @@
 package simple.security.kotlin.adapters.config
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy
 import org.springframework.security.web.SecurityFilterChain
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter
+import simple.security.kotlin.adapters.config.exception.ExceptionSecurityHandler
 
 @Configuration
 @EnableWebSecurity
@@ -39,7 +41,7 @@ class SecurityConfiguration {
             .authorizeHttpRequests {
                 it.requestMatchers(HttpMethod.GET, "/movie/v1").hasAnyAuthority("ADMIN", "USER")
                 it.requestMatchers(HttpMethod.GET, "/movie/v1/movies").hasAnyAuthority("ADMIN", "USER")
-                it.requestMatchers(HttpMethod.POST, "/movie/v1/save").hasAnyAuthority("ADMIN")
+                it.requestMatchers(HttpMethod.POST, "/movie/v1/save").hasAnyAuthority("USER")
                 it.requestMatchers(HttpMethod.PUT, "/movie/v1/update").hasAnyAuthority("ADMIN")
                 it.requestMatchers(HttpMethod.DELETE, "/movie/v1/delete").hasAnyAuthority("ADMIN")
                     .anyRequest().authenticated()
@@ -48,6 +50,14 @@ class SecurityConfiguration {
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)
             .sessionManagement()
             .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            .and()
+            .exceptionHandling()
+            .authenticationEntryPoint(authenticationEntryPoint())
         return http.build()
+    }
+
+    @Bean
+    fun authenticationEntryPoint(): ExceptionSecurityHandler {
+        return ExceptionSecurityHandler(ObjectMapper())
     }
 }
