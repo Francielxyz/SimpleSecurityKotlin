@@ -49,9 +49,9 @@ class AuthenticationService : AuthenticationServicePort {
         }
     }
 
-    override fun refreshToken(request: HttpServletRequest, response: HttpServletResponse): AuthenticationMapper {
+    override fun refreshToken(request: HttpServletRequest?, response: HttpServletResponse?): AuthenticationMapper {
         val authenticationMapper = AuthenticationMapper()
-        val authHeader = request.getHeader(HttpHeaders.AUTHORIZATION)
+        val authHeader = request?.getHeader(HttpHeaders.AUTHORIZATION)
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return authenticationMapper

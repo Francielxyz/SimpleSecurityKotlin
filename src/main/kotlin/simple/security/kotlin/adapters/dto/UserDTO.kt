@@ -1,7 +1,6 @@
 package simple.security.kotlin.adapters.dto
 
 import simple.security.kotlin.adapters.enums.Role
-import java.time.LocalDateTime
 
 data class UserDTO(
     var id: Long? = null,
@@ -9,6 +8,4 @@ data class UserDTO(
     var password: String? = null,
     var email: String? = null,
     var role: Role? = null,
-    var dateTimeCreation: LocalDateTime? = null,
-    var dateTimeLastUpdate: LocalDateTime? = null,
 )

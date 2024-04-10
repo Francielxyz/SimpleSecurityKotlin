@@ -7,6 +7,6 @@ import simple.security.kotlin.application.mapper.AuthenticationMapper
 interface AuthenticationServicePort {
     fun login(email: String?, password: String?): AuthenticationMapper
 
-    fun refreshToken(request: HttpServletRequest, response: HttpServletResponse): AuthenticationMapper
+    fun refreshToken(request: HttpServletRequest?, response: HttpServletResponse?): AuthenticationMapper
 
 }

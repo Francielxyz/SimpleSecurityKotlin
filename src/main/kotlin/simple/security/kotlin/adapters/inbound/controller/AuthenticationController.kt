@@ -31,7 +31,7 @@ class AuthenticationController {
         )
 
     @GetMapping("/v1/refresh-token")
-    fun refreshToken(request: HttpServletRequest, response: HttpServletResponse): ResponseEntity<AuthenticationDTO> =
+    fun refreshToken(request: HttpServletRequest?, response: HttpServletResponse?): ResponseEntity<AuthenticationDTO> =
         ResponseEntity.status(HttpStatus.OK).body(
             service.refreshToken(request, response).let {
                 Converter.toModel(it, AuthenticationDTO::class.java)
