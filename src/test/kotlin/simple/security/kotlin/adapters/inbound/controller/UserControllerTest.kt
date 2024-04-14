@@ -47,8 +47,6 @@ class UserControllerTest {
 
     private var userMapper: UserMapper = UserMapper()
 
-    private fun <T> any(type: Class<T>): T = Mockito.any<T>(type)
-
     val URL = "/user/v1/"
 
     @BeforeEach
