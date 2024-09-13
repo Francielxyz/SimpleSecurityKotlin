@@ -1,7 +1,6 @@
 package simple.security.kotlin.adapters.inbound.controller
 
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
@@ -31,9 +30,9 @@ class AuthenticationController {
         )
 
     @GetMapping("/v1/refresh-token")
-    fun refreshToken(request: HttpServletRequest?, response: HttpServletResponse?): ResponseEntity<AuthenticationDTO> =
+    fun refreshToken(request: HttpServletRequest?): ResponseEntity<AuthenticationDTO> =
         ResponseEntity.status(HttpStatus.OK).body(
-            service.refreshToken(request, response).let {
+            service.refreshToken(request).let {
                 Converter.toModel(it, AuthenticationDTO::class.java)
             }
         )

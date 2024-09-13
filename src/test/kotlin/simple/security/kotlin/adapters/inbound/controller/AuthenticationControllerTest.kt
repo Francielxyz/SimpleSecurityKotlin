@@ -1,7 +1,6 @@
 package simple.security.kotlin.adapters.inbound.controller
 
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
@@ -93,7 +92,7 @@ class AuthenticationControllerTest {
 
     @Test
     fun testRefreshToken() {
-        Mockito.`when`(service.refreshToken(any(HttpServletRequest::class.java), any(HttpServletResponse::class.java))).thenReturn(authentications[1])
+        Mockito.`when`(service.refreshToken(any(HttpServletRequest::class.java))).thenReturn(authentications[1])
 
         mockMvc.perform(
             MockMvcRequestBuilders

@@ -1,7 +1,6 @@
 package simple.security.kotlin.application.service
 
 import jakarta.servlet.http.HttpServletRequest
-import jakarta.servlet.http.HttpServletResponse
 import lombok.RequiredArgsConstructor
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.MessageSource
@@ -49,7 +48,7 @@ class AuthenticationService : AuthenticationServicePort {
         }
     }
 
-    override fun refreshToken(request: HttpServletRequest?, response: HttpServletResponse?): AuthenticationMapper {
+    override fun refreshToken(request: HttpServletRequest?): AuthenticationMapper {
         val authenticationMapper = AuthenticationMapper()
         val authHeader = request?.getHeader(HttpHeaders.AUTHORIZATION)
 
@@ -68,9 +67,10 @@ class AuthenticationService : AuthenticationServicePort {
         return authenticationMapper
     }
 
-    private fun findByEmail(userEmail: String?) = userIntegrationPort.findByEmail(userEmail)?.let {
-        Converter.toModel(it, UserModel::class.java)
-    } ?: throw PersonalizedException(HttpStatus.UNAUTHORIZED, messageSource.getMessage("erro.usuario.invalido"))
+    private fun findByEmail(userEmail: String?) =
+        userIntegrationPort.findByEmail(userEmail)?.let {
+            Converter.toModel(it, UserModel::class.java)
+        } ?: throw PersonalizedException(HttpStatus.UNAUTHORIZED, messageSource.getMessage("erro.usuario.invalido"))
 
     private fun createExtraClaims(role: Role): Map<String, Any> = mapOf(
         "role" to role.option,

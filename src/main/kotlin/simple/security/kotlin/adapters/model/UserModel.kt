@@ -43,7 +43,6 @@ class UserModel(
 
     override fun getUsername(): String? = email
 
-
     override fun isAccountNonExpired(): Boolean = true
 
     override fun isAccountNonLocked(): Boolean = true
