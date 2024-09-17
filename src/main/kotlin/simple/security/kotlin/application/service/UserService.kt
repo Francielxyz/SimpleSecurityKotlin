@@ -41,6 +41,7 @@ class UserService : UserServicePort {
     override fun update(userMapper: UserMapper) {
         val userMapperUpdate = userIntegrationPort.findById(userMapper.id!!)?.also {
             it.userName = userMapper.userName
+            it.email = userMapper.email
         } ?: throw PersonalizedException(HttpStatus.NOT_FOUND, messageSource.getMessage("erro.usuario.nao.encontrado"))
 
         userIntegrationPort.save(Converter.toModel(userMapperUpdate, UserModel::class.java))

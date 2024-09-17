@@ -60,7 +60,7 @@ class AuthenticationServiceTest {
 
     private var authentications: ArrayList<AuthenticationMapper> = arrayListOf()
 
-    private var userMapper: ArrayList<UserMapper> = arrayListOf()
+    private var usersMapper: ArrayList<UserMapper> = arrayListOf()
 
     private var userName = "teste teste"
     private var password = "teste123"
@@ -73,7 +73,7 @@ class AuthenticationServiceTest {
         service = Mockito.spy(service)
         ReflectionTestUtils.setField(service, "messageSource", messageSource)
 
-        userMapper.add(
+        usersMapper.add(
             UserMapper(id = 1, userName = userName, password = password, email = email, role = Role.USER)
         )
 
@@ -95,7 +95,7 @@ class AuthenticationServiceTest {
 
     @Test
     fun testLoginService() {
-        Mockito.`when`(userIntegrationPort.findByEmail(ArgumentMatchers.anyString())).thenReturn(userMapper[0])
+        Mockito.`when`(userIntegrationPort.findByEmail(any(String::class.java))).thenReturn(usersMapper[0])
         Mockito.`when`(jwtService.generateToken(any(UserDetails::class.java), ArgumentMatchers.anyMap()))
             .thenReturn(authentications[0].accessToken)
         Mockito.`when`(jwtService.generateRefreshToken(any(UserDetails::class.java)))
@@ -103,25 +103,25 @@ class AuthenticationServiceTest {
 
         val authenticationMapper = service.login(email, password)
 
-        assertEquals(authentications[0].accessToken, authenticationMapper.accessToken)
-        assertEquals(authentications[0].refreshToken, authenticationMapper.refreshToken)
+        assertEquals(authenticationMapper.accessToken, authentications[0].accessToken)
+        assertEquals(authenticationMapper.refreshToken, authentications[0].refreshToken)
     }
 
     @Test
     fun testLoginUsuarioInvalidoService() {
         try {
-            Mockito.`when`(userIntegrationPort.findByEmail(ArgumentMatchers.anyString())).thenReturn(null)
+            Mockito.`when`(userIntegrationPort.findByEmail(any(String::class.java))).thenReturn(null)
 
             service.login(email, password)
         } catch (e: PersonalizedException) {
-            assertEquals(messageSource.getMessage("erro.usuario.invalido"), e.message)
+            assertEquals(e.message, messageSource.getMessage("erro.usuario.invalido"))
         }
     }
 
     @Test
     fun testRefreshToken() {
         Mockito.`when`(jwtService.extractUsername(any(String::class.java))).thenReturn(email)
-        Mockito.`when`(userIntegrationPort.findByEmail(ArgumentMatchers.anyString())).thenReturn(userMapper[0])
+        Mockito.`when`(userIntegrationPort.findByEmail(any(String::class.java))).thenReturn(usersMapper[0])
         Mockito.`when`(jwtService.isTokenValid(any(UserModel::class.java), any(String::class.java))).thenReturn(true)
         Mockito.`when`(jwtService.generateToken(any(UserModel::class.java), ArgumentMatchers.anyMap()))
             .thenReturn(authentications[1].accessToken)

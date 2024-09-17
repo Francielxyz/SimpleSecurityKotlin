@@ -3,7 +3,6 @@ package simple.security.kotlin.adapters.inbound.controller
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
-import org.mockito.ArgumentMatchers
 import org.mockito.Mockito
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
@@ -98,7 +97,7 @@ class MovieControllerTest {
 
     @Test
     fun testMovieById() {
-        Mockito.`when`(service.getById(ArgumentMatchers.anyLong())).thenReturn(moviesMapper[0])
+        Mockito.`when`(service.getById(any(Long::class.java))).thenReturn(moviesMapper[0])
 
         mockMvc.perform(
             MockMvcRequestBuilders
@@ -114,7 +113,7 @@ class MovieControllerTest {
 
     @Test
     fun testGetAllMovies() {
-        Mockito.`when`(service.findAll(ArgumentMatchers.anyString(), any(Pageable::class.java))).thenReturn(pageMoviesMapper)
+        Mockito.`when`(service.findAll(any(String::class.java), any(Pageable::class.java))).thenReturn(pageMoviesMapper)
 
         mockMvc.perform(
             MockMvcRequestBuilders
@@ -165,7 +164,7 @@ class MovieControllerTest {
 
     @Test
     fun testDeleteMovie() {
-        Mockito.doNothing().`when`(service).delete(ArgumentMatchers.anyLong())
+        Mockito.doNothing().`when`(service).delete(any(Long::class.java))
 
         mockMvc.perform(
             MockMvcRequestBuilders
