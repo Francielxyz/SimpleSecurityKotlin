@@ -27,6 +27,8 @@ class UserService : UserServicePort {
 
     @Autowired
     private lateinit var messageSource: MessageSource
+    override fun getById(id: Long): UserMapper? =
+        userIntegrationPort.findById(id)
 
     override fun register(userMapper: UserMapper) {
         userIntegrationPort.findByEmail(userMapper.email)?.let {
@@ -45,6 +47,14 @@ class UserService : UserServicePort {
         } ?: throw PersonalizedException(HttpStatus.NOT_FOUND, messageSource.getMessage("erro.usuario.nao.encontrado"))
 
         userIntegrationPort.save(Converter.toModel(userMapperUpdate, UserModel::class.java))
+    }
+
+    override fun alterPassword(email: String, password: String) {
+        val userMapper = userIntegrationPort.findByEmail(email)?.also {
+            it.password = passwordEncoder.encode(password)
+        } ?: throw PersonalizedException(HttpStatus.NOT_FOUND, messageSource.getMessage("erro.usuario.nao.encontrado"))
+
+        userIntegrationPort.save(Converter.toModel(userMapper, UserModel::class.java))
     }
 
 }

@@ -88,6 +88,14 @@ class UserServiceTest {
     }
 
     @Test
+    fun testGetUserById() {
+        Mockito.`when`(userIntegrationPort.findById(any(Long::class.java))).thenReturn(usersMapper[0])
+
+        val user = service.getById(1)
+        Assertions.assertEquals(user?.id, usersMapper[0].id)
+    }
+
+    @Test
     fun testSaveUser() {
         Mockito.`when`(userIntegrationPort.findByEmail(any(String::class.java))).thenReturn(null)
         Mockito.`when`(userIntegrationPort.save(any(UserModel::class.java))).thenReturn(usersMapper[0])

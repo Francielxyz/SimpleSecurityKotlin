@@ -41,9 +41,9 @@ class UserPersistenceAdapterTest {
 
         private var users: ArrayList<UserDTO> = arrayListOf()
 
-        private var userMapper: UserMapper = UserMapper()
+        private var usersMapper: ArrayList<UserMapper> = arrayListOf()
 
-        private var userModel: UserModel = UserModel()
+        private var usersModel: ArrayList<UserModel> = arrayListOf()
 
         @BeforeAll
         @JvmStatic
@@ -58,23 +58,25 @@ class UserPersistenceAdapterTest {
 
             users.add(user)
 
-            userMapper = Converter.toModel(user, UserMapper::class.java)
-            userModel = Converter.toModel(user, UserModel::class.java)
+            usersMapper.add(Converter.toModel(user, UserMapper::class.java))
+            usersModel.addAll(usersMapper.map {
+                Converter.toModel(it, UserModel::class.java)
+            })
         }
     }
 
     @Test
     fun testSaveUser() {
-        `when`(repository.save(any(UserModel::class.java))).thenReturn(userModel)
+        `when`(repository.save(any(UserModel::class.java))).thenReturn(usersModel[0])
 
-        assertEquals(Converter.toModel(service.save(userModel), MovieMapper::class.java).id, userMapper.id)
+        assertEquals(Converter.toModel(service.save(usersModel[0]), MovieMapper::class.java).id, usersModel[0].id)
     }
 
     @Test
     fun testFindUserByEmail() {
-        `when`(repository.findByEmail(any(String::class.java))).thenReturn(userModel)
+        `when`(repository.findByEmail(any(String::class.java))).thenReturn(usersModel[0])
 
-        val movie = service.findByEmail(userMapper.email)?.let {
+        val movie = service.findByEmail(usersModel[0].email)?.let {
             Converter.toModel(it, UserMapper::class.java)
         }
 
@@ -85,9 +87,9 @@ class UserPersistenceAdapterTest {
 
     @Test
     fun testFindUserById() {
-        `when`(repository.findById(any(Long::class.java))).thenReturn(Optional.of(userModel))
+        `when`(repository.findById(any(Long::class.java))).thenReturn(Optional.of(usersModel[0]))
 
-        val movie = service.findById(userMapper.id!!)?.let {
+        val movie = service.findById(usersModel[0].id!!)?.let {
             Converter.toModel(it, UserMapper::class.java)
         }
 

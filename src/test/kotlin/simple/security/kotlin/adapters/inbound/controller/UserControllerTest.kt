@@ -49,6 +49,8 @@ class UserControllerTest {
 
     val URL = "/user/v1/"
 
+    private fun <T> any(type: Class<T>): T = Mockito.any<T>(type)
+
     @BeforeEach
     fun setMockOutput() {
         mockMvc = MockMvcBuilders
@@ -72,6 +74,22 @@ class UserControllerTest {
         users.add(user)
 
         userMapper = Converter.toModel(user, UserMapper::class.java)
+    }
+
+    @Test
+    fun testMovieById() {
+        Mockito.`when`(service.getById(any(Long::class.java))).thenReturn(userMapper)
+
+        mockMvc.perform(
+            MockMvcRequestBuilders
+                .get(URL)
+                .param("id", "1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("UTF-8")
+        )
+            .andExpect(MockMvcResultMatchers.status().isOk)
+            .andExpect(MockMvcResultMatchers.jsonPath("$.id").value("1"))
+            .andExpect(MockMvcResultMatchers.jsonPath("$.userName").value("teste"))
     }
 
     @Test

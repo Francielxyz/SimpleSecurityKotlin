@@ -36,7 +36,9 @@ class SecurityConfiguration {
             }
             .authorizeHttpRequests {
                 it.requestMatchers(HttpMethod.POST, "/user/v1/register").permitAll()
+                it.requestMatchers(HttpMethod.PUT, "/user/v1").authenticated()
                 it.requestMatchers(HttpMethod.PUT, "/user/v1/update").authenticated()
+                it.requestMatchers(HttpMethod.PUT, "/user/v1/alter-password").authenticated()
             }
             .authorizeHttpRequests {
                 it.requestMatchers(HttpMethod.GET, "/movie/v1").hasAnyAuthority("ADMIN", "USER")

@@ -27,7 +27,7 @@
 							}
 						},
 						"url": {
-							"raw": "{{url}}/authentication/v1/login?email=teste@gmail.com&password=1234",
+							"raw": "{{url}}/authentication/v1/login?email=teste@gmail.com&password=teste1234",
 							"host": [
 								"{{url}}"
 							],
@@ -43,7 +43,7 @@
 								},
 								{
 									"key": "password",
-									"value": "1234"
+									"value": "teste1234"
 								}
 							]
 						}
@@ -92,6 +92,52 @@
 			"name": "User",
 			"item": [
 				{
+					"name": "By Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{acces_tokenn}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/v1?id=1",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"v1"
+							],
+							"query": [
+								{
+									"key": "id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Register",
 					"request": {
 						"method": "POST",
@@ -127,7 +173,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token}}",
+									"value": "{{acces_tokenn}}",
 									"type": "string"
 								}
 							]
@@ -136,7 +182,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"id\": 1,\r\n    \"user_name\": \"Teste\"\r\n}",
+							"raw": "{\r\n    \"id\": 1,\r\n    \"user_name\": \"Teste 123\",\r\n    \"email\": \"teste@gmail.com\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -152,6 +198,54 @@
 								"user",
 								"v1",
 								"update"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Alter Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{acces_tokenn}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}/user/v1/alter-password?email=teste@gmail.com&password=teste1234",
+							"host": [
+								"{{url}}"
+							],
+							"path": [
+								"user",
+								"v1",
+								"alter-password"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "teste@gmail.com"
+								},
+								{
+									"key": "password",
+									"value": "teste1234"
+								}
 							]
 						}
 					},
@@ -173,7 +267,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token}}",
+									"value": "{{acces_tokenn}}",
 									"type": "string"
 								}
 							]
@@ -219,7 +313,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token}}",
+									"value": "{{acces_tokenn}}",
 									"type": "string"
 								}
 							]
@@ -272,7 +366,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token}}",
+									"value": "{{acces_tokenn}}",
 									"type": "string"
 								}
 							]
@@ -281,7 +375,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"name\": \"Toy Story\",\r\n    \"genre\": 45453,\r\n    \"synopsis\": \"Andy's birthday nears, sparking jealousy among his toys, especially when Buzz Lightyear arrives. In a mishap, Buzz is tossed out the window, prompting Woody to embark on a daring rescue mission to redeem himself.\",\r\n    \"duration\": 81,\r\n    \"launch\": \"1995-12-22\"\r\n}",
+							"raw": "{\r\n    \"name\": \"Toy Story\",\r\n    \"genre\": \"ANIMATION\",\r\n    \"synopsis\": \"Andy's birthday nears, sparking jealousy among his toys, especially when Buzz Lightyear arrives. In a mishap, Buzz is tossed out the window, prompting Woody to embark on a daring rescue mission to redeem himself.\",\r\n    \"duration\": 81,\r\n    \"launch\": \"1995-12-22\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -310,7 +404,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token}}",
+									"value": "{{acces_tokenn}}",
 									"type": "string"
 								}
 							]
@@ -348,7 +442,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{token}}",
+									"value": "{{acces_tokenn}}",
 									"type": "string"
 								}
 							]
@@ -393,6 +487,30 @@
 			"script": {
 				"type": "text/javascript",
 				"exec": [
+					"let url = pm.collectionVariables.get(\"url\");\r",
+					"let email = pm.collectionVariables.get(\"email\");\r",
+					"let password = pm.collectionVariables.get(\"password\");\r",
+					"\r",
+					"let urlLogin = `${url}/authentication/v1/login?email=${email}&password=${password}`;\r",
+					"\r",
+					"const getRequest = {\r",
+					"  url: urlLogin,\r",
+					"  method: 'GET',\r",
+					"  timeout: 0,\r",
+					"  header: {\r",
+					"    \"Content-Type\": \"application/json\",\r",
+					"    \"Accept\": \"*/*\"\r",
+					"  }\r",
+					"};\r",
+					"\r",
+					"pm.sendRequest(getRequest, function (err, res) {\r",
+					"    console.log(\"Login Response: \", res);\r",
+					"    if (err) console.log(\"Error: \", err)\r",
+					"\r",
+					"    pm.collectionVariables.set('access_tokenn', res.headers.get('access_token'));\r",
+					"    pm.collectionVariables.set('refresh_token', res.headers.get('refresh_token'));\r",
+					"});\r",
+					"\r",
 					""
 				]
 			}
@@ -405,6 +523,36 @@
 					""
 				]
 			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "email",
+			"value": "teste@gmail.com",
+			"type": "string"
+		},
+		{
+			"key": "password",
+			"value": "teste1234",
+			"type": "string"
+		},
+		{
+			"key": "refresh_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "acces_tokenn",
+			"value": ""
+		},
+		{
+			"key": "access_tokenn",
+			"value": ""
 		}
 	]
 }
