@@ -1,0 +1,50 @@
+version: '3.8'
+
+services:
+  app:
+    image: simple-security-kotlin:v1
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8081"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/security?useTimezone=true&serverTimezone=America/Sao_Paulo
+      SPRING_DATASOURCE_USERNAME: teste
+      SPRING_DATASOURCE_PASSWORD: teste
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: com.mysql.cj.jdbc.Driver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_HIBERNATE_SHOW_SQL: false
+      SPRING_JPA_HIBERNATE_PROPERTIES_HIBERNATE_FORMAT_SQL: true
+      SPRING_JPA_DATABASE: mysql
+      SPRING_JPA_DATABASE_PLATFORM: org.hibernate.dialect.MySQL5Dialect
+    networks:
+      - app-network
+
+  db:
+    image: mysql:latest
+    container_name: mysqldb
+    restart: always
+    ports:
+      - "3307:3306"
+    expose:
+      - 3306
+    networks:
+      - app-network
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: security
+      MYSQL_USER: teste
+      MYSQL_PASSWORD: teste
+    healthcheck:
+      test: [ "CMD-SHELL", "mysqladmin ping -h localhost" ]
+      interval: 10s
+      retries: 5
+
+networks:
+  app-network:
+    driver: bridge
